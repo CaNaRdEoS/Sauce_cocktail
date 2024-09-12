@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 import skimage
 import random
 
-
+##♥     BRUITAGE
 def bruitage_additif(image, intensite):
     bruit = np.random.normal(0, intensite, image.shape)
     bruitage = image + bruit
@@ -58,6 +58,25 @@ def puissance_bruit(signal, bruit):
 def SNR (signal, bruit):
     return 10*np.log10(puissance_signal(signal)/puissance_bruit(signal, bruit))
 
+##      DEBRUITAGE
+
+def debruitage_filtre_median(image):
+    debruitage = np.zeros((len(image), len(image)))
+    
+    for i in range(2, len(image)-2):
+        for j in range(2, len(image[i])-2) :
+            pixels = [image[i-2][j-2], image[i-2][j-1], image[i-2][j], image[i-2][j+1], image[i-2][j+2],
+                      image[i-1][j-2], image[i-1][j-1], image[i-1][j], image[i-1][j+1], image[i-1][j+2],
+                      image[i][j-2], image[i][j-1], image[i][j], image[i][j+1], image[i][j+2],
+                      image[i+1][j-2], image[i+1][j-1], image[i+1][j], image[i+1][j+1], image[i+1][j+2],
+                      image[i+2][j-2], image[i+2][j-1], image[i+2][j], image[i+2][j+1], image[i+2][j+2]]
+    
+            pixels.sort()
+            debruitage[i][j] = pixels[len(pixels)//2]
+            
+    return debruitage
+                      
+
 def display_image(image, titre):
     skimage.io.imshow(image, cmap="gray")
     plt.title(titre)
@@ -70,15 +89,18 @@ display_image(image, "Image Originale")
 image_sel_poivre = bruitage_sel_poivre(image, 0.1)
 display_image(image_sel_poivre, "Bruitage Sel et Poivre")
 print("Signal sur bruit : ",SNR(image, image_sel_poivre))
+debruitage_sel_poivre = debruitage_filtre_median(image_sel_poivre)
+display_image(debruitage_sel_poivre, "Debruitage Sel et Poivre")
 
-image_additif = bruitage_additif(image, 10)
+image_additif = bruitage_additif(image, 30)
 display_image(image_additif, "Buitage Additif")
-print("Signal sur bruit : ",SNR(image, image_additif))
+debruitage_additif = debruitage_filtre_median(image_additif)
+display_image(debruitage_additif, "Debruitage Additif")
 
 image_multipli = bruitage_multiplicatif(image, 0.2)
 display_image(image_multipli, "Buitage Multiplicatif")
-print("Signal sur bruit : ",SNR(image, image_multipli))
-
+debruitage_multipli = debruitage_filtre_median(image_multipli)
+display_image(debruitage_multipli, "Debruitage Multiplicatif")
 
 #Tests de SNR
 bruit9  = skimage.io.imread(fname='./images_reference/image1_bruitee_snr_9.2885.png')
