@@ -63,7 +63,7 @@ print("Signal sur bruit : ",SNR(image, image_sel_poivre))
 
 
 image_additif = bruitage_additif(image, 10)
-display_images(image_additif, "Buitage Additif")
+display_image(image_additif, "Buitage Additif")
 
 image_multipli = bruitage_multiplicatif(image, 0.2)
-display_images(image_multipli, "Buitage Multiplicatif")
+display_image(image_multipli, "Buitage Multiplicatif")
