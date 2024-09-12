@@ -39,14 +39,14 @@ def bruitage_sel_poivre(image, taux):
 def puissance_signal(image):
     puissance_image = 0
     for i in range(len(image)):
-        for j in range(len(image[0])):
+        for j in range(len(image[i])):
             puissance_image += image[i][j]**2
     return puissance_image
 
 def puissance_bruit(signal, bruit):
     puissance_image = 0
     for i in range(len(signal)):
-        for j in range(len(signal[0])):
+        for j in range(len(signal[i])):
             if (bruit[i][j] <= signal[i][j]):
                 puissance_image += (signal[i][j]-bruit[i][j])**2
             else:
