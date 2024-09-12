@@ -11,15 +11,17 @@ import skimage
 import random
 
 
-def bruitage_additif(image, taux):
-    bruit = np.random.normal(0, taux, image.shape)
+def bruitage_additif(image, intensite):
+    bruit = np.random.normal(0, intensite, image.shape)
     bruitage = image + bruit
+    bruitage = np.clip(bruitage, 0, 255)
     return bruitage
 
-def bruitage_multiplicatif(image, taux):
-    bruit = np.random.normal(0, taux, image.shape)
-    bruitage = image + (image * bruit)
-    return bruitage
+def bruitage_multiplicatif(image, intensite):
+    bruit = np.random.normal(0, intensite, image.shape)
+    bruitage = image * (1 + bruit)
+    bruitage = np.clip(bruitage, 0, 255)
+    return bruitage 
 
 def bruitage_sel_poivre(image, taux):
     image_filtrer = np.zeros((len(image), len(image)))
@@ -60,8 +62,8 @@ print()
 print("Signal sur bruit : ",SNR(image, image_sel_poivre))
 
 
-#image_additif = bruitage_additif(image, 0.1)
-#display_image(image_additif, "Buitage Additif")
+image_additif = bruitage_additif(image, 10)
+display_images(image_additif, "Buitage Additif")
 
-#image_multipli = bruitage_multiplicatif(image, 0.01)
-#display_image(image_multipli, "Buitage Multiplicatif")
+image_multipli = bruitage_multiplicatif(image, 0.2)
+display_images(image_multipli, "Buitage Multiplicatif")
