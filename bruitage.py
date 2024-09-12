@@ -102,9 +102,9 @@ debruitage_multipli = debruitage_filtre_median(image_multipli)
 display_image(debruitage_multipli, "Debruitage Multiplicatif")
 
 #Tests de SNR
-bruit9  = skimage.io.imread(fname='./images_reference/image1_bruitee_snr_9.2885.png')
-bruit41 = skimage.io.imread(fname='./images_reference/image1_bruitee_snr_41.8939.png')
-bruit36 = skimage.io.imread(fname='./images_reference/image1_bruitee_snr_36.1414.png')
+bruit9  = sk.io.imread(fname='./images_reference/image1_bruitee_snr_9.2885.png')
+bruit41 = sk.io.imread(fname='./images_reference/image1_bruitee_snr_41.8939.png')
+bruit36 = sk.io.imread(fname='./images_reference/image1_bruitee_snr_36.1414.png')
 print("Tests des images SNR de test")
 print(np.around(SNR(image,bruit9)))
 print(np.around(SNR(image,bruit41)))
