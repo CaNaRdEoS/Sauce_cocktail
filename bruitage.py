@@ -7,8 +7,8 @@ Created on Fri Sep  6 11:14:49 2024
 
 import numpy as np
 import matplotlib.pyplot as plt
-import skimage
-import random
+import skimage as sk
+import random as rd
 
 ##♥     BRUITAGE
 def bruitage_additif(image, intensite):
@@ -27,8 +27,8 @@ def bruitage_sel_poivre(image, taux):
     image_filtrer = np.zeros((len(image), len(image)))
     for i in range(len(image)) :
         for j in range(len(image[i])) :
-            if random.randint(0, 100) <= taux * 100 :
-                if random.randint(1, 2) == 1:
+            if rd.randint(0, 100) <= taux * 100 :
+                if rd.randint(1, 2) == 1:
                     image_filtrer[i][j] = 255
                 
             else :
@@ -78,11 +78,11 @@ def debruitage_filtre_median(image):
                       
 
 def display_image(image, titre):
-    skimage.io.imshow(image, cmap="gray")
+    sk.io.imshow(image, cmap="gray")
     plt.title(titre)
     plt.show()
 
-image = skimage.io.imread(fname='./images_reference/image1_reference.png')
+image = sk.io.imread(fname='./images_reference/image1_reference.png')
 display_image(image, "Image Originale")
 
 image_sel_poivre = bruitage_sel_poivre(image, 0.1)
