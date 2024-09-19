@@ -64,7 +64,7 @@ def debruitage_filtre_median(image):
     debruitage = np.zeros((len(image), len(image)))
     
     for i in range(2, len(image)-2):
-        for j in range(2, len(image[i])-2) :
+        for j in range(2, len(image[i])-2):
             pixels = [image[i-2][j-2], image[i-2][j-1], image[i-2][j], image[i-2][j+1], image[i-2][j+2],
                       image[i-1][j-2], image[i-1][j-1], image[i-1][j], image[i-1][j+1], image[i-1][j+2],
                       image[i][j-2], image[i][j-1], image[i][j], image[i][j+1], image[i][j+2],
@@ -73,6 +73,20 @@ def debruitage_filtre_median(image):
     
             pixels.sort()
             debruitage[i][j] = pixels[len(pixels)//2]
+            
+    return debruitage
+
+def debruitage_convolution(image, kernel):
+    debruitage = np.zeros((len(image), len(image)))
+
+    for i in range(2, len(image)-2):
+        for j in range(2, len(image[i])-2):
+            nouveau_pixel = 0
+
+            for ker in range(len(kernel)):
+                for nel in range(len(kernel[ker])):
+                    nouveau_pixel += image[i-ker-1][j-nel-1]*kernel[ker][nel]
+            debruitage[i][j] = nouveau_pixel
             
     return debruitage
                       
