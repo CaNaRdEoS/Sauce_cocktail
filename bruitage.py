@@ -93,10 +93,10 @@ def display_image(image, titre):
     plt.show()
 
 image = sk.io.imread(fname='./images_reference/image1_reference.png')
-image = image.astype(np.float_)
+#np.float_ n'existe plus dans la dernière version de numpy
+#image = image.astype(np.float_)
+image = image.astype(np.float64)
 
-
-display_image(image, "Image Originale")
 
 kernel = [[1,1,1],
         [1,1,1],
@@ -123,9 +123,10 @@ debruitage_multipli = debruitage_filtre_median(image_multipli)
 display_image(debruitage_multipli, "Debruitage Multiplicatif")
 
 #Tests de SNR
-bruit9  = sk.io.imread(fname='./images_reference/image1_bruitee_snr_9.2885.png').astype(np.float_)
-bruit41 = sk.io.imread(fname='./images_reference/image1_bruitee_snr_41.8939.png').astype(np.float_)
-bruit36 = sk.io.imread(fname='./images_reference/image1_bruitee_snr_36.1414.png').astype(np.float_)
+#np.float_ n'existe plus dans la dernière version de numpy
+bruit9  = sk.io.imread(fname='./images_reference/image1_bruitee_snr_9.2885.png').astype(np.float64)
+bruit41 = sk.io.imread(fname='./images_reference/image1_bruitee_snr_41.8939.png').astype(np.float64)
+bruit36 = sk.io.imread(fname='./images_reference/image1_bruitee_snr_36.1414.png').astype(np.float64)
 print("Tests des images SNR de test")
 print(np.around(SNR(image,bruit9)))
 print(np.around(SNR(image,bruit41)))
