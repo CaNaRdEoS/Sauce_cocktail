@@ -1,6 +1,7 @@
 import snr_lib as snr
 import bruitage_lib as bruitage
 import debruitage_lib as debruitage
+import graphiques as graph
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -50,3 +51,7 @@ print("Tests des images SNR de test")
 print(np.around(snr.SNR(image,bruit9)))
 print(np.around(snr.SNR(image,bruit41)))
 print(np.around(snr.SNR(image,bruit36)))
+
+
+
+graph.SNR_sur_bruitage(X,Y,Z)
