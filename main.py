@@ -21,14 +21,35 @@ kernel = [[1,1,1],
 
 ###############################################################################
 # SEL POIVRE
-image_sel_poivre = bruitage.bruitage_sel_poivre(image, 0.1)
-display_image(image_sel_poivre, "Bruitage Sel et Poivre")
 
-debruitage_sel_poivre = debruitage.debruitage_filtre_median(image_sel_poivre)
-display_image(debruitage_sel_poivre, "Debruitage Sel et Poivre")
+images_sel_poivre = []
 
-convolution = debruitage.debruitage_convolution(image_sel_poivre, kernel)
+for taux in range(1, 8,2):
+    image_sel_poivre = bruitage.bruitage_sel_poivre(image, taux/10)
+    images_sel_poivre.append(image_sel_poivre)
+    display_image(image_sel_poivre, "Bruitage Sel et Poivre Taux {}".format(taux/10))
+
+convolution = debruitage.debruitage_convolution(images_sel_poivre[0], kernel)
+print(np.around(snr.SNR(image,convolution)))
 display_image(convolution, "Debruitage Convolution Sel et Poivre")
+
+'''
+snr_median =[]
+snr_convolution =[]
+
+for i in range(0,len(images_sel_poivre)):
+    median = debruitage.debruitage_filtre_median(images_sel_poivre[i])
+    snr_median.append(np.around(snr.SNR(image,median)))
+    convolution = debruitage.debruitage_convolution(images_sel_poivre[i], kernel)
+    snr_convolution.append(np.around(snr.SNR(image,convolution)))
+
+graph.SNR_sur_bruitage([0.1,0.3,0.5,0.7],snr_median,snr_convolution)
+
+
+# Affichage des meilleurs cas
+display_image(median, "Debruitage Sel et Poivre")
+display_image(convolution, "Debruitage Convolution Sel et Poivre")
+
 
 ###############################################################################
 # Additif
@@ -43,7 +64,7 @@ display_image(convolution_additif, "Debruitage Convolution Additif")
 
 ###############################################################################
 # Multiplicatif
-image_multipli = bruitage.bruitage_multiplicatif(image, 0.2)
+image_multipli = bruitage.bruitage_multiplicatif(image, 1)
 display_image(image_multipli, "Buitage Multiplicatif")
 
 debruitage_multipli = debruitage.debruitage_filtre_median(image_multipli)
@@ -63,4 +84,6 @@ print(np.around(snr.SNR(image,bruit36)))
 
 
 
-graph.SNR_sur_bruitage(X,Y,Z)
+#graph.SNR_sur_bruitage(X,Y,Z)
+
+'''
