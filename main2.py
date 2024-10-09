@@ -97,8 +97,3 @@ image_sobel = contour.contours_Sobel(image)
 image_canny = feature.canny(image, sigma=5)
 affiche.display_image(image_sobel, "Contours de l'image Sobel")
 affiche.display_image(image_canny, "Contours de l'image Canny")
-
-
-
-image_contours = contour.contours_Sobel(image)
-affiche.display_image(image_contours, "Contours de l'image")
