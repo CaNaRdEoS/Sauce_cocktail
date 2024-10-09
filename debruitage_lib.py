@@ -12,26 +12,22 @@ def debruitage_filtre_median(image):
     return debruitage
 
 def debruitage_convolution(image, kernel):
-    if (len(kernel) == 3):
-        n = 2
-    elif (len(kernel) == 5):
-        n = 3
-    else:
+    kernel_size = len(kernel)
+    if kernel_size not in [3, 5]:
         print("Kernel non implémenté")
         exit()
 
-    debruitage = np.zeros((len(image), len(image)))
+    n = kernel_size // 2
+    
+    debruitage = np.copy(image)
 
-    for i in range(2, len(image)-2):
-        for j in range(2, len(image[i])-2):
+    for i in range(n, image.shape[0] - n):
+        for j in range(n, image.shape[1] - n):
             nouveau_pixel = 0
-
-            for ker in range(len(kernel)):
-                for nel in range(len(kernel[ker])):
-                    if (len(kernel) == 3):
-                        nouveau_pixel += image[i-ker-1][j-nel-1]*kernel[ker][nel]
-                    elif (len(kernel) == 5):
-                        nouveau_pixel += image[i-ker-2][j-nel-2]*kernel[ker][nel]
+            for ker_i in range(kernel_size):
+                for ker_j in range(kernel_size):
+                    nouveau_pixel += image[i - n + ker_i][j - n + ker_j] * kernel[ker_i][ker_j]
+            
             debruitage[i][j] = nouveau_pixel
             
     return debruitage
