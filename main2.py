@@ -7,6 +7,7 @@ import tests as tests
 
 import numpy as np
 import skimage as sk
+from skimage import feature
 
 # Charger l'image de référence
 def charger_image(fichier):
@@ -79,20 +80,25 @@ for i in range(5):
         ligne.append(gaussian(i, j, 2, 2, 0.8))
     kernel.append(ligne)
 
-print(somme)
-# Charger l'image
-image = sk.io.imread(fname='./images_reference/image1_reference.png')
-image = image.astype(np.float64)
 
-# Traitement pour chaque type de bruitage
-traitement_bruit(image, taux, kernel, 'sel_poivre')
-traitement_bruit(image, taux, kernel, 'additif', facteur=100)
-traitement_bruit(image, taux, kernel, 'multiplicatif')
+# Charger l'image
+image = charger_image('./images_reference/image1_reference.png')
 
 # Tests SNR
 tests.tests_snr(image)
 
+# Traitement pour chaque type de bruitage
+#traitement_bruit(image, taux, kernel, 'sel_poivre')
+#traitement_bruit(image, taux, kernel, 'additif', facteur=100)
+#traitement_bruit(image, taux, kernel, 'multiplicatif')
+
 # Detection des contours
+image_sobel = contour.contours_Sobel(image)
+image_canny = feature.canny(image, sigma=5)
+affiche.display_image(image_sobel, "Contours de l'image Sobel")
+affiche.display_image(image_canny, "Contours de l'image Canny")
+
+
 
 image_contours = contour.contours_Sobel(image)
 affiche.display_image(image_contours, "Contours de l'image")

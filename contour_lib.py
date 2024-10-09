@@ -2,6 +2,7 @@ import numpy as np
 import debruitage_lib as debruitage
 
 def contours_Sobel(image):
+      print("Détection des contours en cours")
       Gx = [[1,0,-1],
             [2,0,-2],
             [1,0,-1]]
