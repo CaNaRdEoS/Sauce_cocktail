@@ -1,6 +1,7 @@
 import snr_lib as snr
 import bruitage_lib as bruitage
 import debruitage_lib as debruitage
+import contour_lib as contour
 import affichage as affiche
 import tests as tests
 
@@ -90,3 +91,8 @@ traitement_bruit(image, taux, kernel, 'multiplicatif')
 
 # Tests SNR
 tests.tests_snr(image)
+
+# Detection des contours
+
+image_contours = contour.contours_Sobel(image)
+affiche.display_image(image_contours, "Contours de l'image")
