@@ -1,16 +1,14 @@
 import snr_lib as snr
 import bruitage_lib as bruitage
 import debruitage_lib as debruitage
-import graphiques as graph
+import affichage as affiche
+import tests as tests
 
 import numpy as np
 import matplotlib.pyplot as plt
 import skimage as sk
 
-def display_image(image, titre):
-    sk.io.imshow(image, cmap="gray")
-    plt.title(titre)
-    plt.show()
+
 
 image = sk.io.imread(fname='./images_reference/image1_reference.png')
 image = image.astype(np.float64)
@@ -19,88 +17,127 @@ kernel = [[1,1,1],
           [1,1,1],
           [1,1,1]]
 
+taux = [0.1,0.2,0.4,0.6]
+
             #################
             #   Sel Poivre  #
             #################
 
 images_sel_poivre = []
 
-for taux in range(1, 8,2):
-    image_sel_poivre = bruitage.bruitage_sel_poivre(image, taux/10)
+for taux_valeur in (taux):
+    image_sel_poivre = bruitage.bruitage_sel_poivre(image, taux_valeur)
     images_sel_poivre.append(image_sel_poivre)
-    display_image(image_sel_poivre, "Bruitage Sel et Poivre Taux {}".format(taux/10))
+    affiche.display_image(image_sel_poivre, "Bruitage Sel et Poivre Taux {}".format(taux_valeur))
 
-medians = []
-convolutions = []
-snr_median = []
-snr_convolution = []
+meilleur_median = []
+meilleur_convolution = []
 
-for i in range(0,len(images_sel_poivre)):
-    median = debruitage.debruitage_filtre_median(images_sel_poivre[i])
-    snr_median.append(np.around(snr.SNR(image,median)))
-    medians.append(median)
+meilleur_snr_median = -100
+meilleur_snr_convolution = -100
+
+snrs_median = []
+snrs_convolution = []
+
+for signal in (images_sel_poivre):
+    median = debruitage.debruitage_filtre_median(signal)
+    median_snr = snr.SNR(image,median)
+    snrs_median.append(np.around(median_snr))
+    if(median_snr > meilleur_snr_median):
+        meilleur_snr_median = median_snr
+        meilleur_median = median
     
-    convolution = debruitage.debruitage_convolution(images_sel_poivre[i], kernel)
-    snr_convolution.append(np.around(snr.SNR(image,convolution)))
-    convolutions.append(convolution)
+    convolution = debruitage.debruitage_convolution(signal, kernel)
+    convolution_snr = snr.SNR(image,convolution)
+    snrs_convolution.append(np.around(convolution_snr))
+    if (convolution_snr > meilleur_snr_convolution):
+        meilleur_snr_convolution = convolution_snr
+        meilleur_convolution = convolution
+    
+affiche.SNR_sur_bruitage(taux,snrs_median,snrs_convolution)
+affiche.display_image(meilleur_median, "Bruitage Additif meilleure filtre median")
+affiche.display_image(meilleur_convolution, "Bruitage Additif meilleure filtre convolution")
 
-print("Convo 0 :",snr.SNR(image,convolutions[0]))
-print("Convo 1 :",snr.SNR(image,convolutions[1]))
-
-graph.SNR_sur_bruitage([0.1,0.3,0.5,0.7],snr_median,snr_convolution)
-
-# Affichage des meilleurs cas
-
-
-'''
             #################
             #    Additif    #
             #################
 
-image_additif = bruitage.bruitage_additif(image, 30)
-display_image(image_additif, "Buitage Additif")
+images_additif = []
 
-debruitage_additif = debruitage.debruitage_filtre_median(image_additif)
-display_image(debruitage_additif, "Debruitage Additif Median")
+for taux_valeur in (taux):
+    image_additif = bruitage.bruitage_additif(image, taux_valeur*100)
+    images_additif.append(image_additif)
+    affiche.display_image(image_additif, "Bruitage Additif Intensité {}".format(taux_valeur*100))
 
-convolution_additif = debruitage.debruitage_convolution(image_additif, kernel)
-display_image(convolution_additif, "Debruitage Convolution Additif")
+meilleur_median = []
+meilleur_convolution = []
+
+meilleur_snr_median = -100
+meilleur_snr_convolution = -100
+
+snrs_median = []
+snrs_convolution = []
+
+for signal in (images_additif):
+    median = debruitage.debruitage_filtre_median(signal)
+    median_snr = snr.SNR(image,median)
+    snrs_median.append(np.around(median_snr))
+    if(median_snr > meilleur_snr_median):
+        meilleur_snr_median = median_snr
+        meilleur_median = median
+    
+    convolution = debruitage.debruitage_convolution(signal, kernel)
+    convolution_snr = snr.SNR(image,convolution)
+    snrs_convolution.append(np.around(convolution_snr))
+    if (convolution_snr > meilleur_snr_convolution):
+        meilleur_snr_convolution = convolution_snr
+        meilleur_convolution = convolution
+    
+affiche.SNR_sur_bruitage(taux,snrs_median,snrs_convolution)
+affiche.display_image(meilleur_median, "Bruitage Additif meilleure filtre median")
+affiche.display_image(meilleur_convolution, "Bruitage Additif meilleure filtre convolution")
 
             #################
             # Multiplicatif #
             #################
 
-image_multipli = bruitage.bruitage_multiplicatif(image, 1)
-display_image(image_multipli, "Buitage Multiplicatif")
+images_multiplicatif = []
 
-debruitage_multipli = debruitage.debruitage_filtre_median(image_multipli)
-display_image(debruitage_multipli, "Debruitage Multiplicatif Median")
+for taux_valeur in (taux):
+    image_multiplicatif = bruitage.bruitage_multiplicatif(image, taux_valeur)
+    images_multiplicatif.append(image_multiplicatif)
+    affiche.display_image(image_multiplicatif, "Bruitage Additif Intensité {}".format(taux_valeur))
 
-convolution_multipli = debruitage.debruitage_convolution(image_multipli, kernel)
-display_image(convolution_multipli, "Debruitage Convolution Multiplicatif")
+meilleur_median = []
+meilleur_convolution = []
+
+meilleur_snr_median = -100
+meilleur_snr_convolution = -100
+
+snrs_median = []
+snrs_convolution = []
+
+for signal in (images_multiplicatif):
+    median = debruitage.debruitage_filtre_median(signal)
+    median_snr = snr.SNR(image,median)
+    snrs_median.append(np.around(median_snr))
+    if(median_snr > meilleur_snr_median):
+        meilleur_snr_median = median_snr
+        meilleur_median = median
+    
+    convolution = debruitage.debruitage_convolution(signal, kernel)
+    convolution_snr = snr.SNR(image,convolution)
+    snrs_convolution.append(np.around(convolution_snr))
+    if (convolution_snr > meilleur_snr_convolution):
+        meilleur_snr_convolution = convolution_snr
+        meilleur_convolution = convolution
+    
+affiche.SNR_sur_bruitage(taux,snrs_median,snrs_convolution)
+affiche.display_image(meilleur_median, "Bruitage multiplicatif meilleure filtre median")
+affiche.display_image(meilleur_convolution, "Bruitage multiplicatif meilleure filtre convolution")
 
             #################
             #   Tests SNR   #
             #################
 
-bruit9  = sk.io.imread(fname='./images_reference/image1_bruitee_snr_9.2885.png').astype(np.float64)
-bruit41 = sk.io.imread(fname='./images_reference/image1_bruitee_snr_41.8939.png').astype(np.float64)
-bruit36 = sk.io.imread(fname='./images_reference/image1_bruitee_snr_36.1414.png').astype(np.float64)
-bruit32  = sk.io.imread(fname='./images_reference/image1_bruitee_snr_32.6777.png').astype(np.float64)
-bruit28 = sk.io.imread(fname='./images_reference/image1_bruitee_snr_28.2378.png').astype(np.float64)
-bruit22 = sk.io.imread(fname='./images_reference/image1_bruitee_snr_22.2912.png').astype(np.float64)
-bruit16  = sk.io.imread(fname='./images_reference/image1_bruitee_snr_16.4138.png').astype(np.float64)
-bruit13 = sk.io.imread(fname='./images_reference/image1_bruitee_snr_13.0913.png').astype(np.float64)
-bruit10 = sk.io.imread(fname='./images_reference/image1_bruitee_snr_10.8656.png').astype(np.float64)
-
-print("Tests des images SNR de test")
-print(np.around(snr.SNR(image,bruit9)))
-print(np.around(snr.SNR(image,bruit41)))
-print(np.around(snr.SNR(image,bruit36)))
-print(np.around(snr.SNR(image,bruit32)))
-print(np.around(snr.SNR(image,bruit28)))
-print(np.around(snr.SNR(image,bruit22)))
-print(np.around(snr.SNR(image,bruit16)))
-print(np.around(snr.SNR(image,bruit13)))
-print(np.around(snr.SNR(image,bruit10)))
-'''
+tests.tests_snr(image)

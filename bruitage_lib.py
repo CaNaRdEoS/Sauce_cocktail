@@ -1,7 +1,6 @@
 import numpy as np
 import random as rd
 
-##♥     BRUITAGE
 def bruitage_additif(image, intensite):
     bruit = np.random.normal(0, intensite, image.shape)
     bruitage = image + bruit

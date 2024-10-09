@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import skimage as sk
 
 def SNR_sur_bruitage(X_bruitage, Y_SNR, Z_SNR):
 
@@ -8,3 +9,8 @@ def SNR_sur_bruitage(X_bruitage, Y_SNR, Z_SNR):
 	plt.ylabel('SNR')
 	plt.legend()
 	plt.show()
+
+def display_image(image, titre):
+    sk.io.imshow(image, cmap="gray")
+    plt.title(titre)
+    plt.show()
