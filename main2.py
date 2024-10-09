@@ -59,7 +59,7 @@ def traitement_bruit(image, taux, kernel, type_bruitage, facteur=1):
     print(f"Traitement du bruitage {type_bruitage.capitalize()}...")
     images_bruit = appliquer_bruitage(image, taux, type_bruitage, facteur)
     snrs_median, snrs_convolution, meilleur_median, meilleur_convolution = evaluer_snr(image, images_bruit, kernel)
-    affiche.SNR_sur_bruitage(taux, snrs_median, snrs_convolution)
+    affiche.SNR_sur_bruitage(taux, type_bruitage, snrs_median, snrs_convolution)
     affiche.display_image(meilleur_median, f"Meilleur filtre médian pour {type_bruitage}")
     affiche.display_image(meilleur_convolution, f"Meilleur filtre convolution pour {type_bruitage}")
 
@@ -70,12 +70,15 @@ kernel = []
 def gaussian(x, y, x0, y0, sigma):
     return (1 / (2 * np.pi * sigma**2)) * np.exp(-((x - x0)**2 + (y - y0)**2) / (2 * sigma**2))
 
+somme = 0
 for i in range(5):
     ligne = []
     for j in range(5):
+        somme += gaussian(i, j, 2, 2, 0.8)
         ligne.append(gaussian(i, j, 2, 2, 0.8))
     kernel.append(ligne)
 
+print(somme)
 # Charger l'image
 image = sk.io.imread(fname='./images_reference/image1_reference.png')
 image = image.astype(np.float64)
