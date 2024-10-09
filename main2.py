@@ -65,11 +65,16 @@ def traitement_bruit(image, taux, kernel, type_bruitage, facteur=1):
 
 # Paramètres
 taux = [0.1, 0.2, 0.4, 0.6]
-kernel = [[0, 0, 1, 0, 0],
-          [0, 2, 2, 2, 0],
-          [1, 2, 5, 2, 1],
-          [0, 2, 2, 2, 0],
-          [0, 0, 1, 0, 0]]
+kernel = []
+
+def gaussian(x, y, x0, y0, sigma):
+    return (1 / (2 * np.pi * sigma**2)) * np.exp(-((x - x0)**2 + (y - y0)**2) / (2 * sigma**2))
+
+for i in range(5):
+    ligne = []
+    for j in range(5):
+        ligne.append(gaussian(i, j, 2, 2, 0.8))
+    kernel.append(ligne)
 
 # Charger l'image
 image = sk.io.imread(fname='./images_reference/image1_reference.png')
