@@ -1,4 +1,7 @@
 import numpy as np
+import contour_lib as contour
+from skimage import feature
+import affichage as affiche
 
 def debruitage_filtre_median(image):
     debruitage = np.zeros((len(image), len(image)))
@@ -11,11 +14,19 @@ def debruitage_filtre_median(image):
             
     return debruitage
 
-def debruitage_convolution(image, kernel):
+def debruitage_convolution(image, kernel, avecContour=None):
     kernel_size = len(kernel)
     if kernel_size not in [3, 5]:
         print("Kernel non implémenté")
         exit()
+        
+    if avecContour == "sobel" :
+        image_contour = contour.contours_Sobel(image)
+        affiche.display_image(image_contour, "Test Contour")
+    elif avecContour == "canny" :
+        image_contour = feature.canny(image, sigma=5)
+    else :
+        image_contour = np.zeros((len(image), len(image[0])))
 
     n = kernel_size // 2
     
@@ -23,11 +34,12 @@ def debruitage_convolution(image, kernel):
 
     for i in range(n, image.shape[0] - n):
         for j in range(n, image.shape[1] - n):
-            nouveau_pixel = 0
-            for ker_i in range(kernel_size):
-                for ker_j in range(kernel_size):
-                    nouveau_pixel += image[i - n + ker_i][j - n + ker_j] * kernel[ker_i][ker_j]
-            
-            debruitage[i][j] = nouveau_pixel
+            if image_contour[i][j] < 128 or image_contour[i][j] == False:
+                nouveau_pixel = 0
+                for ker_i in range(kernel_size):
+                    for ker_j in range(kernel_size):
+                        nouveau_pixel += image[i - n + ker_i][j - n + ker_j] * kernel[ker_i][ker_j]
+                
+                debruitage[i][j] = nouveau_pixel
             
     return debruitage
