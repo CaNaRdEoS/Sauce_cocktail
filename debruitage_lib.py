@@ -22,7 +22,6 @@ def debruitage_convolution(image, kernel, avecContour=None):
         
     if avecContour == "sobel" :
         image_contour = contour.contours_Sobel(image)
-        affiche.display_image(image_contour, "Test Contour")
     elif avecContour == "canny" :
         image_contour = feature.canny(image, sigma=5)
     else :

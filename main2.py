@@ -87,17 +87,28 @@ image = charger_image('./images_reference/image1_reference.png')
 # Tests SNR
 tests.tests_snr(image)
 
+
 # Traitement pour chaque type de bruitage
-#traitement_bruit(image, taux, kernel, 'sel_poivre')
-#traitement_bruit(image, taux, kernel, 'additif', facteur=100)
-#traitement_bruit(image, taux, kernel, 'multiplicatif')
-bruitage = bruitage.bruitage_multiplicatif(image, 0.4)
-affiche.display_image(bruitage, "Test")
-debruitage = debruitage.debruitage_convolution(bruitage, kernel)
-affiche.display_image(debruitage, "SOBEL MG")
+traitement_bruit(image, taux, kernel, 'sel_poivre')
+traitement_bruit(image, taux, kernel, 'additif', facteur=100)
+traitement_bruit(image, taux, kernel, 'multiplicatif')
+
+
+#Bonus
 
 # Detection des contours
 image_sobel = contour.contours_Sobel(image)
-image_canny = feature.canny(image, sigma=3)
-#affiche.display_image(image_sobel, "Contours de l'image Sobel")
-#affiche.display_image(image_canny, "Contours de l'image Canny")
+image_canny = feature.canny(image)
+
+affiche.display_image(image_sobel, "Contours de l'image Sobel")
+affiche.display_image(image_canny, "Contours de l'image Canny")
+
+
+#Debruitage adaptatif
+bruitage = bruitage.bruitage_multiplicatif(image, 0.3)
+debruitage_canny = debruitage.debruitage_convolution(bruitage, kernel, "canny")
+debruitage_sobel = debruitage.debruitage_convolution(bruitage, kernel, "sobel")
+
+affiche.display_image(bruitage, "Image bruité")
+affiche.display_image(debruitage_canny, "Image débruité Canny")
+affiche.display_image(debruitage_sobel, "Image débruité Sobel")
