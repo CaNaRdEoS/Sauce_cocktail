@@ -1,7 +1,6 @@
 import numpy as np
 import contour_lib as contour
 from skimage import feature
-import affichage as affiche
 
 def debruitage_filtre_median(image):
     debruitage = np.zeros((len(image), len(image)))
