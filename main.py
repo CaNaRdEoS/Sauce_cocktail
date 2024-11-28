@@ -31,13 +31,12 @@ def appliquer_bruitage(image, taux, type_bruitage, facteur=1):
     return images_bruit
 
 # Évaluer le SNR et trouver les meilleurs filtres
-def evaluer_snr(image, images_bruit, kernel):
 def evaluer_snr(image, images_bruit, kernel1, kernel2):
     snrs_median3 = []
     snrs_median5 = []
     snrs_convolution1 = []
-    snrs_convolutio2 = []
-    meilleur_median3, meilleur_median5, meilleur_convolution = None, None, None
+    snrs_convolution2 = []
+    meilleur_median3, meilleur_median5, meilleur_convolution1, meilleur_convolution2 = None, None, None, None
     meilleur_snr_median3, meilleur_snr_median5, meilleur_snr_convolution1, meilleur_snr_convolution2 = -100, -100, -100, -100
 
     for signal in images_bruit:
@@ -81,25 +80,29 @@ def traitement_bruit(image, taux, kernel1, kernel2, type_bruitage, facteur=1):
     print(f"Traitement du bruitage {type_bruitage.capitalize()}...")
     images_bruit = appliquer_bruitage(image, taux, type_bruitage, facteur)
     snrs_median3, snrs_median5, snrs_convolution1, snrs_convolution2, meilleur_median3, meilleur_median5, meilleur_convolution1, meilleur_convolution2 = evaluer_snr(image, images_bruit, kernel1, kernel2)
-    affiche.SNR_sur_bruitage(taux, type_bruitage,snrs_median3, snrs_median5, snrs_convolution)
+    affiche.SNR_sur_bruitage(taux, type_bruitage,snrs_median3, snrs_median5, snrs_convolution1, snrs_convolution2)
     affiche.display_image(meilleur_median3, f"Meilleur filtre médian pour {type_bruitage}")
     affiche.display_image(meilleur_median5, f"Meilleur filtre médian pour {type_bruitage}")
-    affiche.display_image(meilleur_convolution, f"Meilleur filtre convolution pour {type_bruitage}")
+    affiche.display_image(meilleur_convolution1, f"Meilleur filtre convolution pour {type_bruitage}")
+    affiche.display_image(meilleur_convolution2, f"Meilleur filtre convolution pour {type_bruitage}")
 
-# Paramètres
-taux = [0.1, 0.2, 0.4, 0.6]
-kernel = []
 
 def gaussian(x, y, x0, y0, sigma):
     return (1 / (2 * np.pi * sigma**2)) * np.exp(-((x - x0)**2 + (y - y0)**2) / (2 * sigma**2))
 
-somme = 0
+# Paramètres
+taux = [0.1, 0.2, 0.4, 0.6]
+kernel1 = []
+kernel2 = []
+
 for i in range(5):
-    ligne = []
+    ligne1 = []
+    ligne2 = []
     for j in range(5):
-        somme += gaussian(i, j, 2, 2, 0.8)
-        ligne.append(gaussian(i, j, 2, 2, 0.8))
-    kernel.append(ligne)
+        ligne1.append(gaussian(i, j, 2, 2, 0.4))
+        ligne2.append(gaussian(i, j, 2, 2, 0.8))
+    kernel1.append(ligne1)
+    kernel2.append(ligne2)
 
 
 # Charger l'image
@@ -110,9 +113,9 @@ tests.tests_snr(image)
 
 
 # Traitement pour chaque type de bruitage
-traitement_bruit(image, taux, kernel, 'sel_poivre')
-traitement_bruit(image, taux, kernel, 'additif', facteur=100)
-traitement_bruit(image, taux, kernel, 'multiplicatif')
+traitement_bruit(image, taux, kernel1, kernel2, 'sel_poivre')
+traitement_bruit(image, taux, kernel1, kernel2, 'additif', facteur=100)
+traitement_bruit(image, taux, kernel1, kernel2, 'multiplicatif')
 
 
 #Bonus
@@ -127,8 +130,8 @@ affiche.display_image(image_canny, "Contours de l'image Canny")
 
 #Debruitage adaptatif
 bruitage = bruitage.bruitage_multiplicatif(image, 0.3)
-debruitage_canny = debruitage.debruitage_convolution(bruitage, kernel, "canny")
-debruitage_sobel = debruitage.debruitage_convolution(bruitage, kernel, "sobel")
+debruitage_canny = debruitage.debruitage_convolution(bruitage, kernel1, "canny")
+debruitage_sobel = debruitage.debruitage_convolution(bruitage, kernel1, "sobel")
 
 affiche.display_image(bruitage, "Image bruité")
 affiche.display_image(debruitage_canny, "Image débruité Canny")

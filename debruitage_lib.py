@@ -14,12 +14,12 @@ def debruitage_filtre_median(image, taille):
         for i in range(1, len(image)-1):
             for j in range(1, len(image[i])-1) :
                 pixels = [image[i+x][j+y] for x in range(-1, 2) for y in range(-1, 2)]
+                debruitage[i][j] = np.median(pixels)
     else :
         for i in range(2, len(image)-2):
             for j in range(2, len(image[i])-2) :
-                pixels = [image[i+x][j+y] for x in range(-2, 3) for y in range(-2, 3)]
-        
-    debruitage[i][j] = np.median(pixels)
+                pixels = [image[i+x][j+y] for x in range(-2, 3) for y in range(-2, 3)]       
+                debruitage[i][j] = np.median(pixels)
             
     return debruitage
 
