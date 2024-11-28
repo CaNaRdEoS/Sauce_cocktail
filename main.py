@@ -32,11 +32,13 @@ def appliquer_bruitage(image, taux, type_bruitage, facteur=1):
 
 # Évaluer le SNR et trouver les meilleurs filtres
 def evaluer_snr(image, images_bruit, kernel):
+def evaluer_snr(image, images_bruit, kernel1, kernel2):
     snrs_median3 = []
     snrs_median5 = []
-    snrs_convolution = []
+    snrs_convolution1 = []
+    snrs_convolutio2 = []
     meilleur_median3, meilleur_median5, meilleur_convolution = None, None, None
-    meilleur_snr_median3, meilleur_snr_median5, meilleur_snr_convolution = -100, -100, -100
+    meilleur_snr_median3, meilleur_snr_median5, meilleur_snr_convolution1, meilleur_snr_convolution2 = -100, -100, -100, -100
 
     for signal in images_bruit:
         # Filtre médian 3x3
@@ -56,23 +58,32 @@ def evaluer_snr(image, images_bruit, kernel):
             meilleur_snr_median5 = median_snr
             meilleur_median5 = median
         
-        # Filtre convolution
-        convolution = debruitage.debruitage_convolution(signal, kernel)
+        # Filtre convolution SIGMA 0.2
+        convolution = debruitage.debruitage_convolution(signal, kernel1)
         convolution_snr = snr.SNR(image, convolution)
-        snrs_convolution.append(np.around(convolution_snr))
-        if convolution_snr > meilleur_snr_convolution:
-            meilleur_snr_convolution = convolution_snr
-            meilleur_convolution = convolution
+        snrs_convolution1.append(np.around(convolution_snr))
+        if convolution_snr > meilleur_snr_convolution1:
+            meilleur_snr_convolution1 = convolution_snr
+            meilleur_convolution1 = convolution
 
-    return snrs_median3, snrs_median5, snrs_convolution, meilleur_median3, meilleur_median5, meilleur_convolution
+        # Filtre convolution SIGMA 0.8
+        convolution = debruitage.debruitage_convolution(signal, kernel2)
+        convolution_snr = snr.SNR(image, convolution)
+        snrs_convolution2.append(np.around(convolution_snr))
+        if convolution_snr > meilleur_snr_convolution2:
+            meilleur_snr_convolution2 = convolution_snr
+            meilleur_convolution2 = convolution
+
+    return snrs_median3, snrs_median5, snrs_convolution1, snrs_convolution2, meilleur_median3, meilleur_median5, meilleur_convolution1, meilleur_convolution2
 
 # Processus principal de traitement du bruitage et du débruitage
-def traitement_bruit(image, taux, kernel, type_bruitage, facteur=1):
+def traitement_bruit(image, taux, kernel1, kernel2, type_bruitage, facteur=1):
     print(f"Traitement du bruitage {type_bruitage.capitalize()}...")
     images_bruit = appliquer_bruitage(image, taux, type_bruitage, facteur)
-    snrs_median3, snrs_median5, snrs_convolution, meilleur_median3, meilleur_median5, meilleur_convolution = evaluer_snr(image, images_bruit, kernel)
-    affiche.SNR_sur_bruitage(taux, type_bruitage, snrs_median5, snrs_convolution)
-    affiche.display_image(meilleur_median, f"Meilleur filtre médian pour {type_bruitage}")
+    snrs_median3, snrs_median5, snrs_convolution1, snrs_convolution2, meilleur_median3, meilleur_median5, meilleur_convolution1, meilleur_convolution2 = evaluer_snr(image, images_bruit, kernel1, kernel2)
+    affiche.SNR_sur_bruitage(taux, type_bruitage,snrs_median3, snrs_median5, snrs_convolution)
+    affiche.display_image(meilleur_median3, f"Meilleur filtre médian pour {type_bruitage}")
+    affiche.display_image(meilleur_median5, f"Meilleur filtre médian pour {type_bruitage}")
     affiche.display_image(meilleur_convolution, f"Meilleur filtre convolution pour {type_bruitage}")
 
 # Paramètres
