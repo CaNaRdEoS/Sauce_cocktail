@@ -1,10 +1,10 @@
 import numpy as np
 
-def puissance_signal(image):
+def puissance_signal(signal):
     puissance_image = 0
-    for i in range(len(image)):
-        for j in range(len(image[i])):
-            puissance_image += abs(image[i][j])**2
+    for i in range(len(signal)):
+        for j in range(len(signal[i])):
+            puissance_image += abs(signal[i][j])**2
     return puissance_image
 
 def puissance_bruit(signal, bruit):

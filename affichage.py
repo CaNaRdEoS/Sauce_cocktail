@@ -1,10 +1,11 @@
 import matplotlib.pyplot as plt
 import skimage as sk
 
-def SNR_sur_bruitage(X_bruitage, titre, Y_SNR, Z_SNR):
+def SNR_sur_bruitage(X_bruitage, titre, median3, median5, convolution):
     plt.title("Calcul du SNR par rapport au niveau de bruitage pour la méthode "+titre)
-    plt.plot(X_bruitage, Y_SNR, label='Médian')
-    plt.plot(X_bruitage, Z_SNR, label='Convolution')
+    plt.plot(X_bruitage, median3, label='Médian 3x3')
+    plt.plot(X_bruitage, median5, label='Médian 5x5')
+    plt.plot(X_bruitage, convolution, label='Convolution')
     plt.xlabel('Niveau de bruitage')
     plt.ylabel('SNR')
     plt.legend()
